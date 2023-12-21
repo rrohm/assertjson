@@ -1,0 +1,6 @@
+{
+  "name": "robert",
+  "age": 52,
+  "smokes": false,
+  "loves": ["Flowers", "Pets"]
+}
