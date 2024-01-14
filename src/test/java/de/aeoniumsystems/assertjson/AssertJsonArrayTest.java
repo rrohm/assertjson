@@ -15,11 +15,13 @@
  */
 package de.aeoniumsystems.assertjson;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
+ * Unit tests for {@link AssertJsonArray}.
  *
  * @author robert rohm
  */
@@ -76,6 +78,54 @@ public class AssertJsonArrayTest {
 
     AssertJsonObject result = instance.getObjectAt(index);
     assertNotNull(result);
+  }
+
+  /**
+   * Test of isEmpty method, of class AssertJsonArray.
+   *
+   * @throws java.lang.Exception any
+   */
+  @Test
+  public void testAssertEmtpy() throws Exception {
+    System.out.println("assertEmtpy");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "array_empty.json");
+    AssertJsonArray instance = AssertJson.assertThat(path).isArray();
+    AssertJsonArray result = instance.isEmpty();
+    assertNotNull(result);
+  }
+
+  @Test
+  public void testAssertEmtpy_throws() throws IOException {
+    System.out.println("assertEmtpy_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "array_strings.json");
+    AssertJsonArray instance = AssertJson.assertThat(path).isArray();
+    AssertionError error = assertThrows(AssertionError.class, () -> instance.isEmpty());
+    assertNotNull(error);
+    assertEquals("JSON array is expected to be empty, but is not empty.", error.getMessage());
+  }
+
+  /**
+   * Test of isNotEmpty method, of class AssertJsonArray.
+   *
+   * @throws java.lang.Exception any
+   */
+  @Test
+  public void testAssertNotEmtpy() throws Exception {
+    System.out.println("assertNotEmtpy");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "array_strings.json");
+    AssertJsonArray instance = AssertJson.assertThat(path).isArray();
+    AssertJsonArray result = instance.isNotEmpty();
+    assertNotNull(result);
+  }
+
+  @Test
+  public void testAssertNotEmtpy_throws() throws Exception {
+    System.out.println("assertNotEmtpy_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "array_empty.json");
+    AssertJsonArray instance = AssertJson.assertThat(path).isArray();
+    AssertionError error = assertThrows(AssertionError.class, () -> instance.isNotEmpty());
+    assertNotNull(error);
+    assertEquals("JSON array is expected not to be empty, but is empty.", error.getMessage());
   }
 
 }

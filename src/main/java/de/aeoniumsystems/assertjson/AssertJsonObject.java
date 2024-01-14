@@ -34,6 +34,17 @@ public class AssertJsonObject {
   }
 
   /**
+   * Assert that the current JSON object has an array property with the given name, and return a new
+   * {@link AssertJsonArray} instance for further examination of the array property with the given name.
+   *
+   * @param property The name of the expected array property.
+   * @return A new {@link AssertJsonArray} instance for further examination of the array property with the given name.
+   */
+  public AssertJsonArray getArray(String property) {
+    return new AssertJsonArray(this.jsonObject.getJsonArray(property));
+  }
+
+  /**
    * Assert that the given JSON object contains a property of the given name with the given value. Currently supported
    * types are:
    * <ul>
@@ -48,7 +59,7 @@ public class AssertJsonObject {
    */
   public <T> AssertJsonObject has(String property, T value) {
     if (!this.jsonObject.containsKey(property)) {
-      throw new AssertionError("JSON object does not contain a property '" + property + "'.");
+      throw new AssertionError("JSON object does not contain a property '" + property + "': \n" + jsonObject.toString());
     }
     if (value instanceof String) {
       String t = (String) value;
@@ -87,13 +98,15 @@ public class AssertJsonObject {
     return this;
   }
 
-  public AssertJsonArray getArray(String property) {
-    return new AssertJsonArray(this.jsonObject.getJsonArray(property));
-  }
-
+  /**
+   * Assert that the current JSON object has an integer property with the given name. The value is not tested for.
+   *
+   * @param property The name of the expected integer property.
+   * @return The same {@link AssertJsonObject} instance, for further examination.
+   */
   public AssertJsonObject hasInt(String property) {
     if (!this.jsonObject.containsKey(property)) {
-      throw new AssertionError("JSON object does not contain a property '" + property + "'.");
+      throw new AssertionError("JSON object does not contain a property '" + property + "': \n" + jsonObject.toString());
     }
     JsonValue jsonValue = this.jsonObject.get(property);
     JsonValue.ValueType valueType = jsonValue.getValueType();
@@ -119,15 +132,21 @@ public class AssertJsonObject {
       }
 
     } else {
-      throw new AssertionError("JSON property '" + property + "' is expected to be an Integer, but is a <" + valueType + ">.");
+      throw new AssertionError("JSON property '" + property + "' is expected to be an Integer, but is of type <" + valueType + ">.");
     }
 
     return this;
   }
 
+  /**
+   * Assert that the current JSON object has an long property with the given name. The value is not tested for.
+   *
+   * @param property The name of the expected long property.
+   * @return The same {@link AssertJsonObject} instance, for further examination.
+   */
   public AssertJsonObject hasLong(String property) {
     if (!this.jsonObject.containsKey(property)) {
-      throw new AssertionError("JSON object does not contain a property '" + property + "'.");
+      throw new AssertionError("JSON object does not contain a property '" + property + "': \n" + jsonObject.toString());
     }
     JsonValue jsonValue = this.jsonObject.get(property);
     JsonValue.ValueType valueType = jsonValue.getValueType();
@@ -154,6 +173,20 @@ public class AssertJsonObject {
       throw new AssertionError("JSON property '" + property + "' is expected to be an Integer, but is a <" + valueType + ">.");
     }
 
+    return this;
+  }
+
+  /**
+   * Assert that the current JSON object does not contain a property with the given name, e.g., because the unit or
+   * system under test was meant to erase that property.
+   *
+   * @param property The property name.
+   * @return The same {@link AssertJsonObject} instance, for further examination.
+   */
+  public AssertJsonObject hasNot(String property) {
+    if (this.jsonObject.containsKey(property)) {
+      throw new AssertionError("JSON object does contain a property '" + property + ", but is expected not to': \n" + jsonObject.toString());
+    }
     return this;
   }
 }

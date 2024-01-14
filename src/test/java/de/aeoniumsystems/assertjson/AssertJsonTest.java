@@ -15,7 +15,6 @@
  */
 package de.aeoniumsystems.assertjson;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -25,8 +24,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
+ * Unit tests for {@link AssertJson}.
  *
- * @author robert
+ * @author robert rohm
  */
 public class AssertJsonTest {
 

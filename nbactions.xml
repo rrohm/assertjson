@@ -29,4 +29,18 @@
                 <jpda.listen>true</jpda.listen>
             </properties>
         </action>
+        <action>
+            <actionName>jacoco</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>clean</goal>
+                <goal>verify</goal>
+            </goals>
+            <properties>
+                <skipTests>false</skipTests>
+                <forkMode>once</forkMode>
+            </properties>
+        </action>
     </actions>

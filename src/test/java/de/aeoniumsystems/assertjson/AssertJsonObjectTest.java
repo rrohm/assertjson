@@ -45,7 +45,7 @@ public class AssertJsonObjectTest {
     AssertionError error = assertThrows(AssertionError.class, () -> {
       AssertJsonObject result = instance.has(property, 123);
     });
-    assertEquals("JSON object does not contain a property 'name'.", error.getMessage());
+    assertEquals("JSON object does not contain a property 'name': \n{}", error.getMessage());
   }
 
   /**
@@ -127,6 +127,22 @@ public class AssertJsonObjectTest {
   }
 
   @Test
+  public void testHas_int_propertyNotFound_throws() throws Exception {
+    System.out.println("has_propertyNotFound_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    String property = "birthday";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> {
+      instance.has(property, "52");
+    });
+    assertEquals("JSON object does not contain a property 'birthday': \n"
+            + "{\"name\":\"robert\",\"age\":52,\"smokes\":false,\"loves\":[\"Flowers\",\"Pets\"]}", error.getMessage());
+  }
+
+  @Test
   public void testHas_int_asString_throws() throws Exception {
     System.out.println("has");
     Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
@@ -160,6 +176,22 @@ public class AssertJsonObjectTest {
     });
 
     assertEquals("JSON property 'age' is expected to be an Integer of <53>, but is <52>.", error.getMessage());
+  }
+
+  @Test
+  public void testHas_int_incorrectNumberType_throws() throws Exception {
+    System.out.println("has");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    String property = "age";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> {
+      instance.has(property, 53.3);
+    });
+
+    assertEquals("JSON property 'age' is expected to be <53.3>, but is <52>.", error.getMessage());
   }
 
   /**
@@ -220,7 +252,7 @@ public class AssertJsonObjectTest {
    */
   @Test
   public void testHasInt_long_throws() throws Exception {
-    System.out.println("hasInt");
+    System.out.println("hasInt_long_throws");
     Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_numbers.json");
     AssertJson json = AssertJson.assertThat(path);
     AssertJsonObject instance = json.isObject();
@@ -228,6 +260,46 @@ public class AssertJsonObjectTest {
 
     AssertionError error = assertThrows(AssertionError.class, () -> instance.hasInt(property));
     assertEquals("JSON property 'long' is bigger than Integer.MAX_VALUE: <2147483648>.", error.getMessage());
+  }
+
+  @Test
+  public void testHasInt_float_throws() throws Exception {
+    System.out.println("hasInt_float_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_numbers.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+    String property = "float";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> instance.hasInt(property));
+    assertEquals("JSON property 'float' is not an integer value: <1234.5>.", error.getMessage());
+  }
+
+  @Test
+  public void testHasInt_NaN_throws() throws Exception {
+    System.out.println("hasInt_NaN_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_numbers.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+    String property = "NaN";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> instance.hasInt(property));
+    assertEquals("JSON property 'NaN' is expected to be an Integer, but is of type <OBJECT>.", error.getMessage());
+  }
+  
+  @Test
+  public void testHasInt_propertyNotFound_throws() throws Exception {
+    System.out.println("hasInt_propertyNotFound_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    String property = "birthday";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> {
+      instance.hasInt(property);
+    });
+    assertEquals("JSON object does not contain a property 'birthday': \n"
+            + "{\"name\":\"robert\",\"age\":52,\"smokes\":false,\"loves\":[\"Flowers\",\"Pets\"]}", error.getMessage());
   }
 
   /**
@@ -245,5 +317,56 @@ public class AssertJsonObjectTest {
 
     AssertJsonObject result = instance.hasLong(property);
     assertNotNull(result);
+  }
+  
+
+  @Test
+  public void testHas_long_propertyNotFound_throws() throws Exception {
+    System.out.println("has_long_propertyNotFound_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    String property = "birthday";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> {
+      instance.hasLong(property);
+    });
+    assertEquals("JSON object does not contain a property 'birthday': \n"
+            + "{\"name\":\"robert\",\"age\":52,\"smokes\":false,\"loves\":[\"Flowers\",\"Pets\"]}", error.getMessage());
+  }
+
+  /**
+   * Test of hasNot method, of class AssertJsonObject.
+   *
+   * @throws java.lang.Exception Any.
+   */
+  @Test
+  public void testHasNot() throws Exception {
+    System.out.println("hasNot");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_empty.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    String property = "name";
+    AssertJsonObject result = instance.hasNot(property);
+
+    assertNotNull(result);
+  }
+
+  @Test
+  public void testHasNot_throws() throws Exception {
+    System.out.println("hasNot_throws");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    String property = "name";
+
+    AssertionError error = assertThrows(AssertionError.class, () -> {
+      AssertJsonObject result = instance.hasNot(property);
+    });
+    assertEquals("JSON object does contain a property 'name, but is expected not to': \n"
+            + "{\"name\":\"robert\",\"age\":52,\"smokes\":false,\"loves\":[\"Flowers\",\"Pets\"]}", error.getMessage());
   }
 }
