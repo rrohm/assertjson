@@ -12,6 +12,6 @@ HTTPJsonClient.GET("http://localhost:" + JAX_WS_PORT + "/openejb/categories")
         .assertStatus(200)
         .assertJSON()
         .isArray()
-        .isNotEmtpy();
+        .isNotEmpty();
 ```
 
