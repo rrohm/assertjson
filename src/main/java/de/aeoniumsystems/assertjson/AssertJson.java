@@ -1,26 +1,17 @@
 /*
- * ----- AEONIUM SOFTWARE SYSTEMS SOURCE CODE LICENSE -----
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ * Copyright 2024 robert rohm.
  *
- * Copyright 2023 AEONIUM SOFTWARE SYSTEMS - ALL RIGHTS RESERVED.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The contents of this file are intellectual property of
- * Aeonium Software Systems, Robert Rohm. All rights reserved. 
- * You must NOT, especially:
- * - redistribute this file in source form,
- * - redistribute this file in binary form,
- * - modify this file,
- * - remove or modify this copyright information,
- * - use this file for your own work
- * WITHOUT WRITTEN PERMISSION.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Anyway, we appreciate any interest in our work and knowledge.
- * So, if you wish to use this file for your own purposes, 
- * please contact us:
- * mailto:info@aeonium-systems.de
- * 
- *
- *   2023 aeonium software systems UG (haftungsbeschränkt), Robert Rohm.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.aeoniumsystems.assertjson;
 

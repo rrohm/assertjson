@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 robert.
+ * Copyright 2024 robert rohm.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package de.aeoniumsystems.assertjson;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
