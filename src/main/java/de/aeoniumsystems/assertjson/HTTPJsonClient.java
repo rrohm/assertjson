@@ -15,6 +15,7 @@
  */
 package de.aeoniumsystems.assertjson;
 
+import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.DELETE;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.GET;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.POST;
 import jakarta.json.bind.JsonbBuilder;
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 public class HTTPJsonClient {
 
   public enum RequestType {
-    GET, POST, PUT
+    GET, POST, PUT, DELETE
   }
 
   private final RequestType requestType;
@@ -59,6 +60,10 @@ public class HTTPJsonClient {
     this.requestType = requestType;
   }
 
+  public static HTTPJsonClient DELETE(String url) {
+    return new HTTPJsonClient(url, DELETE);
+  }
+  
   /**
    * Convenience facotry method for constructing a new {@link HTTPJsonClient}, for issuing a GET request to the given
    * URL. This is equivalent to calling:
@@ -115,11 +120,6 @@ public class HTTPJsonClient {
 
     HttpClient client = clientBuilder.build();
 
-//    JsonbConfig config = new JsonbConfig()
-//            .withNullValues(Boolean.TRUE)
-//            .withFormatting(Boolean.TRUE);
-//
-//    String json = JsonbBuilder.create(config).toJson(data);
     HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
     try {
       requestBuilder = requestBuilder.uri(new URI(this.url));

@@ -189,4 +189,8 @@ public class AssertJsonObject {
     }
     return this;
   }
+  
+  public <T extends Class> AssertJsonTypedObject is(T type){
+    return new AssertJsonTypedObject<>(type, this.jsonObject);
+  }
 }

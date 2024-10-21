@@ -15,6 +15,8 @@
  */
 package de.aeoniumsystems.assertjson;
 
+import de.aeoniumsystems.assertjson.demo.Person;
+import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -367,5 +369,27 @@ public class AssertJsonObjectTest {
     });
     assertEquals("JSON object does contain a property 'name, but is expected not to': \n"
             + "{\"name\":\"robert\",\"age\":52,\"smokes\":false,\"loves\":[\"Flowers\",\"Pets\"]}", error.getMessage());
+  }
+  
+  @Test
+  public void testIs_Object() throws Exception{
+    System.out.println("testIs_Object");
+    
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonTypedObject instance = json
+            .isObject()
+            .is(Object.class);
+  }
+  
+  @Test
+  public void testIs_Person() throws Exception{
+    System.out.println("testIs_Object");
+    
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonTypedObject instance = json
+            .isObject()
+            .is(Person.class);
   }
 }
