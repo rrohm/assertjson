@@ -43,6 +43,7 @@ public class AssertJsonTypedObjectTest {
     AssertJsonTypedObject<Person> instance = new AssertJsonTypedObject(Person.class, Files.readString(path));
     
     Person person = instance.get();
+    assertNotNull(person);
   }
   
   /**
@@ -59,6 +60,27 @@ public class AssertJsonTypedObjectTest {
     AssertJsonTypedObject instance = json.isObject().is(Person.class);
     
     Object result = instance.get();
+    assertNotNull(result);
+  }
+
+  /**
+   * Test of assertEquals method, of class AssertJsonTypedObject.
+   * @throws java.lang.Exception any
+   */
+  @Test
+  public void testAssertEquals() throws Exception {
+    System.out.println("assertEquals");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonTypedObject<Class<Person>> instance = json.isObject().is(Person.class);
+    
+    int intValue = 0;
+    AssertJsonTypedObject expResult = null;
+//    instance.assertEquals((target) -> target.geti, intValue)
+//    AssertJsonTypedObject result = instance.assertEquals((p) -> p.getAge(), intValue);
+//    assertEquals(expResult, result);
+    // TODO review the generated test code and remove the default call to fail.
+//    fail("The test case is a prototype.");
   }
   
 }

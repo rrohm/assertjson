@@ -286,7 +286,7 @@ public class AssertJsonObjectTest {
     AssertionError error = assertThrows(AssertionError.class, () -> instance.hasInt(property));
     assertEquals("JSON property 'NaN' is expected to be an Integer, but is of type <OBJECT>.", error.getMessage());
   }
-  
+
   @Test
   public void testHasInt_propertyNotFound_throws() throws Exception {
     System.out.println("hasInt_propertyNotFound_throws");
@@ -319,7 +319,6 @@ public class AssertJsonObjectTest {
     AssertJsonObject result = instance.hasLong(property);
     assertNotNull(result);
   }
-  
 
   @Test
   public void testHas_long_propertyNotFound_throws() throws Exception {
@@ -370,26 +369,27 @@ public class AssertJsonObjectTest {
     assertEquals("JSON object does contain a property 'name, but is expected not to': \n"
             + "{\"name\":\"robert\",\"age\":52,\"smokes\":false,\"loves\":[\"Flowers\",\"Pets\"]}", error.getMessage());
   }
-  
+
   @Test
-  public void testIs_Object() throws Exception{
+  public void testIs_Object() throws Exception {
     System.out.println("testIs_Object");
-    
+
     Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
     AssertJson json = AssertJson.assertThat(path);
     AssertJsonTypedObject instance = json
             .isObject()
             .is(Object.class);
   }
-  
+
   @Test
-  public void testIs_Person() throws Exception{
+  public void testIs_Person() throws Exception {
     System.out.println("testIs_Object");
-    
+
     Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
     AssertJson json = AssertJson.assertThat(path);
-    AssertJsonTypedObject instance = json
+    AssertJsonTypedObject<Class<Person>> instance = json
             .isObject()
             .is(Person.class);
+    
   }
 }

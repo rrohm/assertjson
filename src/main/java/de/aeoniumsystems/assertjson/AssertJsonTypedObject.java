@@ -32,8 +32,8 @@ public class AssertJsonTypedObject<T> {
   private JsonObject jsonObject;
 
   @FunctionalInterface
-  public interface Getter{
-    Object get();
+  public interface Getter<T>{
+    Object get(Object target);
   }
   
   public AssertJsonTypedObject(Class<T> type, String json) {
@@ -52,9 +52,9 @@ public class AssertJsonTypedObject<T> {
     this.object = jsonb.fromJson(jsonObject.toString(), type);
   }
   
-  public AssertJsonTypedObject<T> assertEquals(Getter getter, int intValue){
+  public AssertJsonTypedObject<T> assertEquals(Getter<T> getter, int intValue){
     
-    if (intValue != Integer.parseInt(getter.get().toString())) {
+    if (intValue != Integer.parseInt(getter.get(this.object).toString())) {
       throw new AssertionError();
     }
     return this;
