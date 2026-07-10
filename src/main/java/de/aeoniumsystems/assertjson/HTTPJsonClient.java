@@ -18,8 +18,10 @@ package de.aeoniumsystems.assertjson;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.DELETE;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.GET;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.POST;
+import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.PUT;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
+import jakarta.json.bind.JsonbException;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -28,6 +30,8 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -36,6 +40,8 @@ import java.util.logging.Logger;
  * @author robert rohm
  */
 public class HTTPJsonClient {
+
+  private static final System.Logger LOG = System.getLogger(HTTPJsonClient.class.getName());
 
   public enum RequestType {
     GET, POST, PUT, DELETE
@@ -76,9 +82,33 @@ public class HTTPJsonClient {
     return new HTTPJsonClient(url, GET);
   }
 
+  public static HTTPJsonClient POST(String url) {
+    return new HTTPJsonClient(url, POST);
+  }
+
   public static HTTPJsonClient POST(String url, Object data) {
     final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, POST);
     httpJsonClient.data(data);
+
+    return httpJsonClient;
+  }
+
+  public static HTTPJsonClient PUT(String url) {
+    final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, PUT);
+
+    return httpJsonClient;
+  }
+  
+  public static HTTPJsonClient PUT(String url, Object data) {
+    final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, PUT);
+    httpJsonClient.data(data);
+
+    return httpJsonClient;
+  }
+  
+  public static HTTPJsonClient PUT(String url, Path dataPath) throws IOException {
+    final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, PUT);
+    httpJsonClient.data(Files.readString(dataPath));
 
     return httpJsonClient;
   }
@@ -93,8 +123,16 @@ public class HTTPJsonClient {
     return this;
   }
 
-  public void data(Object data) {
+  public HTTPJsonClient data(Object data) {
     this.data = data;
+    return this;
+  }
+  
+  public HTTPJsonClient data(Path dataPath) throws IOException {
+    final String data = Files.readString(dataPath);
+    LOG.log(System.Logger.Level.INFO, data);
+    this.data = data;
+    return this;
   }
 
   /**
@@ -131,16 +169,17 @@ public class HTTPJsonClient {
 
     HttpRequest request;
 
-    JsonbConfig config = new JsonbConfig()
-            .withNullValues(Boolean.TRUE)
-            .withFormatting(Boolean.TRUE);
-
     switch (requestType) {
       case GET:
         request = requestBuilder.GET().build();
         break;
+      case PUT:
+        final String jsonPUTdata = prepareData();
+        final HttpRequest.BodyPublisher putBodyPublisher = HttpRequest.BodyPublishers.ofString(jsonPUTdata);
+        request = requestBuilder.PUT(putBodyPublisher).build();
+        break;
       case POST:
-        final String json = JsonbBuilder.create(config).toJson(this.data);
+        final String json = prepareData();
         final HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(json);
         request = requestBuilder.POST(bodyPublisher).build();
         break;
@@ -155,6 +194,19 @@ public class HTTPJsonClient {
     } catch (IOException | InterruptedException ex) {
       Logger.getLogger(HTTPJsonClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
       throw new RuntimeException("Cannot get JSON data.", ex);
+    }
+  }
+
+  private String prepareData() throws JsonbException {
+    if (this.data instanceof String) {
+      return (String) this.data;
+      
+    } else {
+      JsonbConfig config = new JsonbConfig()
+              .withNullValues(Boolean.TRUE)
+              .withFormatting(Boolean.TRUE);
+
+      return JsonbBuilder.create(config).toJson(this.data);
     }
   }
 

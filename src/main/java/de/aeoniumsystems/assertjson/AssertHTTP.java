@@ -43,7 +43,11 @@ public class AssertHTTP {
   
   public AssertHTTP assertStatus(int statusCode){
     if (response.statusCode() != statusCode) {
-      throw new AssertionError("HTTP Status should be <" + statusCode + ">, but is <" + this.response.statusCode() + ">.");
+      if (response.statusCode() >= 500) {
+        throw new AssertionError("HTTP Status should be <" + statusCode + ">, but is <" + this.response.statusCode() + ">. Response: " + this.response.body());
+      } else {
+        throw new AssertionError("HTTP Status should be <" + statusCode + ">, but is <" + this.response.statusCode() + ">.");
+      }
     }
     return this;
   }
