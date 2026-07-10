@@ -37,9 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AssertHTTPTest {
 
-  public AssertHTTPTest() {
-  }
-
   /**
    * Test of assertJSON method, of class AssertHTTP.
    */

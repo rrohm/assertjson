@@ -27,9 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AssertJsonArrayTest {
 
-  public AssertJsonArrayTest() {
-  }
-
   /**
    * Test of sizeOf method, of class AssertJsonArray.
    *

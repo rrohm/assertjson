@@ -19,6 +19,7 @@ import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.DELETE;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.GET;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.POST;
 import static de.aeoniumsystems.assertjson.HTTPJsonClient.RequestType.PUT;
+import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
 import jakarta.json.bind.JsonbException;
@@ -32,6 +33,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -50,9 +55,9 @@ public class HTTPJsonClient {
   private final RequestType requestType;
   private Object data;
   private final String url;
-  private String host = null;
-  private int port = 0;
   private Authenticator authenticator = null;
+  private Map<String, List<String>> headers = null;
+  private String contentType = "application/json";
 
   /**
    * Creates a new instance of {@link HTTPJsonClient}, for the given URL with the given request type. The request will
@@ -66,26 +71,54 @@ public class HTTPJsonClient {
     this.requestType = requestType;
   }
 
+  /**
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a DELETE request to the
+   * given URL. This is equivalent to calling:
+   * <pre><code>new HTTPJsonClient("http://some.url", DELETE);</code></pre>
+   *
+   * @param url The URL to request with this client.
+   * @return The client instance, configured with URL and request type.
+   */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient DELETE(String url) {
     return new HTTPJsonClient(url, DELETE);
   }
-  
+
   /**
-   * Convenience facotry method for constructing a new {@link HTTPJsonClient}, for issuing a GET request to the given
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a GET request to the given
    * URL. This is equivalent to calling:
    * <pre><code>new HTTPJsonClient("http://some.url", GET);</code></pre>
    *
    * @param url The URL to request with this client.
    * @return The client instance, configured with URL and request type.
    */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient GET(String url) {
     return new HTTPJsonClient(url, GET);
   }
 
+  /**
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a POST request to the given
+   * URL. This is equivalent to calling:
+   * <pre><code>new HTTPJsonClient("http://some.url", POST);</code></pre>
+   *
+   * @param url The URL to request with this client.
+   * @return The client instance, configured with URL and request type.
+   */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient POST(String url) {
     return new HTTPJsonClient(url, POST);
   }
 
+  /**
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a POST request to the given
+   * URL, with data to be set as request body.
+   *
+   * @param url The URL to request with this client.
+   * @param data The data object, will be converted to String if it is not already.
+   * @return The client instance, configured with URL and request type.
+   */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient POST(String url, Object data) {
     final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, POST);
     httpJsonClient.data(data);
@@ -93,19 +126,47 @@ public class HTTPJsonClient {
     return httpJsonClient;
   }
 
+  /**
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a PUT request to the given
+   * URL. This is equivalent to calling:
+   * <pre><code>new HTTPJsonClient("http://some.url", PUT);</code></pre>
+   *
+   * @param url The URL to request with this client.
+   * @return The client instance, configured with URL and request type.
+   */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient PUT(String url) {
     final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, PUT);
 
     return httpJsonClient;
   }
-  
+
+  /**
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a PUT request to the given
+   * URL, with data to be set as request body.
+   *
+   * @param url The URL to request with this client.
+   * @param data The data object, will be converted to String if it is not already.
+   * @return The client instance, configured with URL and request type.
+   */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient PUT(String url, Object data) {
     final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, PUT);
     httpJsonClient.data(data);
 
     return httpJsonClient;
   }
-  
+
+  /**
+   * Convenience factory method for constructing a new {@link HTTPJsonClient}, for preparing a PUT request to the given
+   * URL, with a path secification to load string content for the request body.
+   *
+   * @param url The URL to request with this client.
+   * @param dataPath The path specification to load the string content from.
+   * @return The client instance, configured with URL and request type.
+   * @throws java.io.IOException
+   */
+  @SuppressWarnings("java:S100")
   public static HTTPJsonClient PUT(String url, Path dataPath) throws IOException {
     final HTTPJsonClient httpJsonClient = new HTTPJsonClient(url, PUT);
     httpJsonClient.data(Files.readString(dataPath));
@@ -123,33 +184,72 @@ public class HTTPJsonClient {
     return this;
   }
 
-  public HTTPJsonClient data(Object data) {
-    this.data = data;
+  /**
+   * Set the content type for the request. Default is <code>application/json</code>.
+   *
+   * @param contentType The HTTP content type-
+   * @return The <code>HTTPJsonClient</code> instance, for method chaining ("fluent API").
+   */
+  public HTTPJsonClient contentType(String contentType) {
+    this.contentType = contentType;
     return this;
   }
-  
-  public HTTPJsonClient data(Path dataPath) throws IOException {
-    final String data = Files.readString(dataPath);
-    LOG.log(System.Logger.Level.INFO, data);
+
+  /**
+   * Set the request data. The object is converted to string content via it's <code>toString()</code> method.
+   *
+   * @param data The data object.
+   * @return The <code>HTTPJsonClient</code> instance, for method chaining ("fluent API").
+   */
+  public HTTPJsonClient data(Object data) {
     this.data = data;
     return this;
   }
 
   /**
+   * Load string data to be sent from a path into the file system.
    *
-   * @param host
-   * @return
+   * @param dataPath The path spec.
+   * @return The <code>HTTPJsonClient</code> instance, for method chaining ("fluent API").
+   * @throws IOException In case of failure to read the data file.
    */
-  public HTTPJsonClient host(String host) {
-    this.host = host;
+  public HTTPJsonClient data(Path dataPath) throws IOException {
+    final String content = Files.readString(dataPath);
+    LOG.log(System.Logger.Level.INFO, content);
+    this.data = content;
     return this;
   }
 
-  public HTTPJsonClient port(int port) {
-    this.port = port;
+  /**
+   * Set a request header.
+   *
+   * @param key The header name.
+   * @param value The header value.
+   * @return The <code>HTTPJsonClient</code> instance, for method chaining ("fluent API").
+   */
+  public HTTPJsonClient header(String key, String value) {
+
+    if (this.headers == null) {
+      this.headers = new HashMap<>();
+    }
+
+    if (!this.headers.containsKey(key)) {
+      this.headers.put(key, new ArrayList<>());
+    }
+
+    List<String> headerContent = this.headers.get(key);
+    if (!headerContent.contains(value)) {
+      headerContent.add(value);
+    }
+
     return this;
   }
 
+  /**
+   * Send the HTTP request and return an {@link AssertJson} object for examining the resonse.
+   *
+   * @return An {@link AssertJson} object for examining the response.
+   */
   public AssertHTTP send() {
     HttpClient.Builder clientBuilder = HttpClient.newBuilder();
     if (this.authenticator != null) {
@@ -165,9 +265,17 @@ public class HTTPJsonClient {
       Logger.getLogger(HTTPJsonClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
       throw new RuntimeException("Invalid URL: " + this.url, ex);
     }
-    requestBuilder.setHeader("Content-type", "application/json");
+    requestBuilder.setHeader("Content-type", this.contentType);
 
-    HttpRequest request;
+    if (this.headers != null) {
+      for (Map.Entry<String, List<String>> entry : this.headers.entrySet()) {
+        for (String value : entry.getValue()) {
+          requestBuilder.setHeader(entry.getKey(), value);
+        }
+      }
+    }
+
+    HttpRequest request = null;
 
     switch (requestType) {
       case GET:
@@ -183,8 +291,9 @@ public class HTTPJsonClient {
         final HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(json);
         request = requestBuilder.POST(bodyPublisher).build();
         break;
-      default:
-        throw new RuntimeException("Unsupported request type: " + this.requestType);
+      case DELETE:
+        request = requestBuilder.DELETE().build();
+        break;
     }
 
     HttpResponse<String> response;
@@ -197,16 +306,25 @@ public class HTTPJsonClient {
     }
   }
 
+  /**
+   * Internal preparation of HTTP content: Parse to pretty-printed JSON, if it is not a string anyway.
+   *
+   * @return String content for the HTTP request.
+   * @throws JsonbException If it cannot generate JSON.
+   */
   private String prepareData() throws JsonbException {
     if (this.data instanceof String) {
       return (String) this.data;
-      
+
     } else {
       JsonbConfig config = new JsonbConfig()
               .withNullValues(Boolean.TRUE)
               .withFormatting(Boolean.TRUE);
-
-      return JsonbBuilder.create(config).toJson(this.data);
+      try (final Jsonb builder = JsonbBuilder.create(config)) {
+        return builder.toJson(this.data);
+      } catch (Exception ex) {
+        throw new JsonbException("Cannot create JSON from this data: " + this.data, ex);
+      }
     }
   }
 

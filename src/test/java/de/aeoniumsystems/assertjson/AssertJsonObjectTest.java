@@ -16,7 +16,6 @@
 package de.aeoniumsystems.assertjson;
 
 import de.aeoniumsystems.assertjson.demo.Person;
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

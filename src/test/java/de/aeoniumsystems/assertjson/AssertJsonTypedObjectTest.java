@@ -16,11 +16,13 @@
 package de.aeoniumsystems.assertjson;
 
 import de.aeoniumsystems.assertjson.demo.Person;
-import java.io.IOException;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 
 /**
  *
@@ -28,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AssertJsonTypedObjectTest {
   
-  public AssertJsonTypedObjectTest() {
-  }
-
   @Test
   public void testConstruct() throws Exception {
     System.out.println("construct");
@@ -46,6 +45,29 @@ public class AssertJsonTypedObjectTest {
     assertNotNull(person);
   }
   
+  @Test
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
+  public void testConstruct_throws() {
+    System.out.println("construct_throws");
+    
+    assertThrows(RuntimeException.class, () -> {
+      new AssertJsonTypedObject(Person.class, "some foo");
+    });
+  }
+  
+  
+  @Test
+  @Disabled("TODO")
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
+  public void testConstruct_jsonObj_throws() {
+    System.out.println("construct_jsonObj_throws");
+    
+    final JsonObject jsonObj = Json.createObjectBuilder().add("foo", "baz").build();
+    assertThrows(RuntimeException.class, () -> {
+      new AssertJsonTypedObject(Person.class, (JsonObject) jsonObj);
+    });
+  }
+  
   /**
    * Test of assertEquals method, of class AssertJsonTypedObject.
    * @throws java.lang.Exception any
@@ -56,7 +78,7 @@ public class AssertJsonTypedObjectTest {
     
     Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
     AssertJson json = AssertJson.assertThat(path);
-    int intValue = 52;
+
     AssertJsonTypedObject instance = json.isObject().is(Person.class);
     
     Object result = instance.get();
@@ -74,13 +96,22 @@ public class AssertJsonTypedObjectTest {
     AssertJson json = AssertJson.assertThat(path);
     AssertJsonTypedObject<Class<Person>> instance = json.isObject().is(Person.class);
     
-    int intValue = 0;
-    AssertJsonTypedObject expResult = null;
-//    instance.assertEquals((target) -> target.geti, intValue)
-//    AssertJsonTypedObject result = instance.assertEquals((p) -> p.getAge(), intValue);
-//    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
+    int intValue = 52;
+    AssertJsonTypedObject<Class<Person>> result = instance.assertEquals(target -> ((Person)target).getAge(), intValue);
+    assertNotNull(result);
+  }
+  
+  @Test
+  public void testAssertEquals_assert_false() throws Exception {
+    System.out.println("assertEquals_assert_false");
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonTypedObject<Class<Person>> instance = json.isObject().is(Person.class);
+    
+    int intValue = 51;
+    assertThrows(AssertionError.class, () -> {
+      instance.assertEquals(target -> ((Person)target).getAge(), intValue);
+    });
   }
   
 }

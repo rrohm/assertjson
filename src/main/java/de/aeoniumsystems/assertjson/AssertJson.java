@@ -18,6 +18,7 @@ package de.aeoniumsystems.assertjson;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.json.JsonStructure;
 import java.io.IOException;
 import java.io.StringReader;
@@ -46,8 +47,12 @@ public class AssertJson {
     if (json.isBlank()) {
       throw new AssertionError("JSON string is blank.");
     }
-
-    return new AssertJson(Json.createReader(new StringReader(json)).read());
+    
+    try (final JsonReader reader = Json.createReader(new StringReader(json))) {
+      final JsonStructure structure = reader.read();
+      
+      return new AssertJson(structure);
+    }
   }
 
   public static AssertJson assertThat(Path path) throws IOException {
