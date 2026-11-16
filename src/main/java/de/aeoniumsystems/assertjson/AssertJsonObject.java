@@ -46,10 +46,24 @@ public class AssertJsonObject {
 
   /**
    * Assert that the given JSON object contains a property of the given name with the given value. Currently supported
+   * 
+   * @param property The property name to test for.
+   * @return This object, to allow method chaining.
+   */
+  public AssertJsonObject has(String property) {
+    if (!this.jsonObject.containsKey(property)) {
+      throw new AssertionError("JSON object does not contain a property '" + property + "': \n" + jsonObject.toString());
+    }
+    return this;
+  }
+  
+  /**
+   * Assert that the given JSON object contains a property of the given name with the given value. Currently supported
    * types are:
    * <ul>
    * <li>String</li>
    * <li>Integer</li>
+   * <li>Number</li>
    * </ul>
    *
    * @param <T> The value type.

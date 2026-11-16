@@ -16,6 +16,7 @@
 package de.aeoniumsystems.assertjson;
 
 import de.aeoniumsystems.assertjson.demo.Person;
+import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -192,6 +193,22 @@ public class AssertJsonObjectTest {
     });
 
     assertEquals("JSON property 'age' is expected to be <53.3>, but is <52>.", error.getMessage());
+  }
+
+  /**
+   * Test of has method, of class AssertJsonObject.
+   * @throws java.lang.Exception any
+   */
+  @Test
+  public void testHas_String() throws Exception {
+    System.out.println("has");
+    String property = "loves";
+    Path path = Path.of(System.getProperty("user.dir"), "src", "test", "json", "object_person.json");
+    AssertJson json = AssertJson.assertThat(path);
+    AssertJsonObject instance = json.isObject();
+
+    AssertJsonObject result = instance.has(property);
+    assertNotNull(result);
   }
 
   /**
