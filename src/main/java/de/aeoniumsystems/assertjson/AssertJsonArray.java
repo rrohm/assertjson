@@ -77,4 +77,25 @@ public class AssertJsonArray {
   public AssertJsonObject getObjectAt(int index) {
     return new AssertJsonObject(this.jsonArray.getJsonObject(index));
   }
+  
+  /**
+   * For manual checking JSON content: print the JSON array to console, then proceed.
+   *
+   * @return The same {@link AssertJsonObject} instance, for further examination.
+   */
+  public AssertJsonArray print() {
+    System.out.println(this.jsonArray.toString());
+    return this;
+  }
+
+  /**
+   * Returns a JSON string representation of this JSON array.
+   *
+   * @return JSON text.
+   */
+  @Override
+  public String toString() {
+    return this.jsonArray.toString();
+  }
+
 }

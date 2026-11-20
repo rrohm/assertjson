@@ -46,7 +46,7 @@ public class AssertJsonObject {
 
   /**
    * Assert that the given JSON object contains a property of the given name with the given value. Currently supported
-   * 
+   *
    * @param property The property name to test for.
    * @return This object, to allow method chaining.
    */
@@ -56,7 +56,7 @@ public class AssertJsonObject {
     }
     return this;
   }
-  
+
   /**
    * Assert that the given JSON object contains a property of the given name with the given value. Currently supported
    * types are:
@@ -152,6 +152,10 @@ public class AssertJsonObject {
     return this;
   }
 
+  public AssertJsonObject hasInt(String property, int value) {
+    return this.has(property, value);
+  }
+
   /**
    * Assert that the current JSON object has an long property with the given name. The value is not tested for.
    *
@@ -203,8 +207,28 @@ public class AssertJsonObject {
     }
     return this;
   }
-  
-  public <T extends Class> AssertJsonTypedObject is(T type){
+
+  public <T extends Class> AssertJsonTypedObject is(T type) {
     return new AssertJsonTypedObject<>(type, this.jsonObject);
+  }
+
+  /**
+   * For manual checking JSON content: print the JSON object to console, then proceed.
+   *
+   * @return The same {@link AssertJsonObject} instance, for further examination.
+   */
+  public AssertJsonObject print() {
+    System.out.println(this.jsonObject.toString());
+    return this;
+  }
+
+  /**
+   * Returns a JSON string representation of this JSON object.
+   *
+   * @return JSON text.
+   */
+  @Override
+  public String toString() {
+    return this.jsonObject.toString();
   }
 }
