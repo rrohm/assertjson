@@ -24,6 +24,8 @@ import jakarta.json.JsonArray;
  */
 public class AssertJsonArray {
 
+  private static final System.Logger LOG = System.getLogger(AssertJsonArray.class.getName());
+
   private final JsonArray jsonArray;
 
   public AssertJsonArray(JsonArray jsonArray) {
@@ -79,12 +81,12 @@ public class AssertJsonArray {
   }
   
   /**
-   * For manual checking JSON content: print the JSON array to console, then proceed.
+   * For manual checking JSON content: Log the JSON array via <code>System.Logger</code>, at INFO level, then proceed.
    *
    * @return The same {@link AssertJsonObject} instance, for further examination.
    */
   public AssertJsonArray print() {
-    System.out.println(this.jsonArray.toString());
+    LOG.log(System.Logger.Level.INFO, this.jsonArray.toString());
     return this;
   }
 

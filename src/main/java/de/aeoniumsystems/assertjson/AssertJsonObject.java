@@ -27,6 +27,8 @@ import java.math.BigDecimal;
  */
 public class AssertJsonObject {
 
+  private static final System.Logger LOG = System.getLogger(AssertJsonObject.class.getName());
+
   private final JsonObject jsonObject;
 
   public AssertJsonObject(JsonObject asJsonObject) {
@@ -213,12 +215,12 @@ public class AssertJsonObject {
   }
 
   /**
-   * For manual checking JSON content: print the JSON object to console, then proceed.
+   * For manual checking JSON content: Log the JSON object via <code>System.Logger</code>, at INFO level, then proceed.
    *
    * @return The same {@link AssertJsonObject} instance, for further examination.
    */
   public AssertJsonObject print() {
-    System.out.println(this.jsonObject.toString());
+    LOG.log(System.Logger.Level.INFO, this.jsonObject.toString());
     return this;
   }
 
